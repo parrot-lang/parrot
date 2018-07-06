@@ -1,0 +1,7 @@
+
+(defn fact [n]
+    (if (= n 1.0) 1
+        (* n (fact (- n 1)))))
+
+
+(println (fact 30.0))

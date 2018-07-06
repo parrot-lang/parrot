@@ -1,0 +1,36 @@
+(def a "hello world")
+(println a)
+
+
+(def fact (fn [n] 
+    (if (= n 1) 1
+            (* n (fact (- n 1))))))
+
+
+(def sum (fn [n] 
+    (if (= n 1) 1
+            (+ n (sum (- n 1))))))
+
+
+(def sum2 (fn (n acc) (if (= n 0) acc (sum2 (- n 1) (+ n acc)))))
+
+
+(println (sum2 1000 0))
+
+(def res2 nil)
+(def res2 (sum2 10000 0))
+res2
+
+(def foo (fn (n) (if (= n 0) 0 (bar (- n 1)))))
+(def bar (fn (n) (if (= n 0) 0 (foo (- n 1)))))
+
+(foo 10000)
+
+
+(defmacro unless (fn [prd a b] `(if (not ~prd) ~a ~b)))
+
+(println (fact 10))
+
+(println (sum 100))
+
+

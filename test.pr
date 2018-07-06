@@ -1,0 +1,15 @@
+(def c (makeChan 2))
+
+(defn fact [n s accum]
+        (if (= n s) (send c accum)
+                (let [new-n (- n 1)
+                      new-acc (* n accum)]
+                      (fact new-n s new-acc))))
+
+(go fact [15.0 1.0 1])
+(go fact [30.0 15.0 1])
+
+
+(println (* (receive c) (receive c)))
+
+

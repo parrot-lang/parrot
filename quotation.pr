@@ -1,0 +1,60 @@
+
+(def zz-env {"stack" [] "pointer" 0})
+
+;; read str
+(defn read-program [f]
+    (slurp f))
+
+(defn zz-read [s]
+    (string-split s "\n"))
+
+(defn incptr [env] 
+        (let [v (get env "pointer")]
+            (update env "pointer" (+ v 1))))
+(defn decptr [env] 
+        (let [v (get env "pointer")]
+            (update env "pointer" (- v 1))))
+
+(defn incval [env]
+    (let [p (get env "pointer")
+          s (get env "stack")]
+          (array-update s p (nth s p))))
+(defn decval []
+    nil)
+(defn getchar []
+    nil)
+(defn putchar []
+    nil)
+(defn while []
+    nil)
+(defn while-end []
+    nil)
+
+(defn run [token]
+    (if (= token "bb") 
+        (println "bb")
+        (if (= token "aa")
+            (println "aa")
+            (if (= token "cc")
+                (println "cc")
+                (if (= token "dd")
+                    (println "dd")
+                    (if (= token "ee")
+                        (println "ee")
+                        (if (= token "ff")
+                            (println "ff")
+                            (if (= token "gg")
+                                (println "gg")
+                                (if (= token "hh")
+                                    (println "hh"))))))))))
+
+(defn zz-eval [tokens]
+    (map run tokens))
+
+(zz-eval (zz-read (read-program "zz.yl")))
+
+(println (decptr zz-env))
+
+; (println zz-env)
+
+; (println (read-program "zz.yl"))
