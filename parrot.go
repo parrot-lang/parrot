@@ -383,7 +383,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	rep("(println \"Parrot 0.04-alpha [Go 1.9.4] \")")
+	rep("(println \"Parrot 0.05-alpha [Go 1.9.4] \")")
 	for {
 		text, err := readline.Readline("user> ")
 		text = strings.TrimRight(text, "\n")

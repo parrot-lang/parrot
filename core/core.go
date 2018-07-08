@@ -886,6 +886,9 @@ var NS = map[string]types.ParrotType{
 	"receive": func(a []types.ParrotType) (types.ParrotType, error) {
 		return ChanFunction("receive", a)
 	},
+	"system": func(a []types.ParrotType) (types.ParrotType, error) {
+		return SystemFunction(a)
+	},
 	"exit": func(a []types.ParrotType) (types.ParrotType, error) {
 		fmt.Println("Bye !")
 		os.Exit(0)
