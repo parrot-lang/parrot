@@ -1,10 +1,11 @@
-package main
+package parrot
 
 import (
 	"errors"
-	"fmt"
-	"os"
-	"strings"
+	"io/ioutil"
+	// "fmt"
+	// "os"
+	// "strings"
 )
 
 import (
@@ -12,7 +13,7 @@ import (
 	. "github.com/sllt/parrot/env"
 	"github.com/sllt/parrot/printer"
 	"github.com/sllt/parrot/reader"
-	"github.com/sllt/parrot/readline"
+	// "github.com/sllt/parrot/readline"
 	. "github.com/sllt/parrot/types"
 )
 
@@ -330,17 +331,23 @@ func Print(exp ParrotType) (string, error) {
 	return printer.PrintStr(exp, true), nil
 }
 
-var repl_env, _ = NewEnv(nil, nil, nil)
+func Run(str string) (ParrotType, error) {
+	b, e := ioutil.ReadFile(str)
+	if e != nil {
+		return nil, e
+	}
+	return Rep(string(b))
+}
 
 // repl
-func rep(str string) (ParrotType, error) {
+func Rep(str string) (ParrotType, error) {
 	var exp ParrotType
 	var res string
 	var e error
 	if exp, e = Read(str); e != nil {
 		return nil, e
 	}
-	if exp, e = Eval(exp, repl_env); e != nil {
+	if exp, e = Eval(exp, Repl_env); e != nil {
 		return nil, e
 	}
 	if res, e = Print(exp); e != nil {
@@ -349,56 +356,23 @@ func rep(str string) (ParrotType, error) {
 	return res, nil
 }
 
-func main() {
-	// core.go: defined using go
+var Repl_env, _ = NewEnv(nil, nil, nil)
+
+func init() {
 	for k, v := range core.NS {
-		repl_env.Set(Symbol{k}, Func{v.(func([]ParrotType) (ParrotType, error)), nil, false})
+		Repl_env.Set(Symbol{k}, Func{v.(func([]ParrotType) (ParrotType, error)), nil, false})
 	}
-	repl_env.Set(Symbol{"eval"}, Func{func(a []ParrotType) (ParrotType, error) {
-		return Eval(a[0], repl_env)
+	Repl_env.Set(Symbol{"eval"}, Func{func(a []ParrotType) (ParrotType, error) {
+		return Eval(a[0], Repl_env)
 	}, nil, false})
-	repl_env.Set(Symbol{"*ARGV*"}, List{})
+	Repl_env.Set(Symbol{"*ARGV*"}, List{})
 
-	// core.mal: defined using the language itself
-	rep("(def *host-language* \"go\")")
-	rep("(def not (fn (a) (if a false true)))")
-	rep("(def load-file (fn (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))")
-	rep("(defmacro cond (fn (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))")
-	rep("(def *gensym-counter* (atom 0))")
-	rep("(def gensym (fn [] (symbol (str \"G__\" (swap! *gensym-counter* (fn* [x] (+ 1 x)))))))")
-	rep("(defmacro or (fn (& xs) (if (empty? xs) nil (if (= 1 (count xs)) (first xs) (let (condvar (gensym)) `(let (~condvar ~(first xs)) (if ~condvar ~condvar (or ~@(rest xs)))))))))")
-	rep("(defmacro defn (fn [name args body] `(def ~name (fn ~args ~body))))")
-
-	// called with mal script to load and eval
-	if len(os.Args) > 1 {
-		args := make([]ParrotType, 0, len(os.Args)-2)
-		for _, a := range os.Args[2:] {
-			args = append(args, a)
-		}
-		repl_env.Set(Symbol{"*ARGV*"}, List{args, nil})
-		if _, e := rep("(load-file \"" + os.Args[1] + "\")"); e != nil {
-			fmt.Printf("Error: %v\n", e)
-			os.Exit(1)
-		}
-		os.Exit(0)
-	}
-
-	rep("(println \"Parrot 0.05-alpha [Go 1.9.4] \")")
-	for {
-		text, err := readline.Readline("user> ")
-		text = strings.TrimRight(text, "\n")
-		if err != nil {
-			return
-		}
-		var out ParrotType
-		var e error
-		if out, e = rep(text); e != nil {
-			if e.Error() == "<empty line>" {
-				continue
-			}
-			fmt.Printf("Error: %v\n", e)
-			continue
-		}
-		fmt.Printf("%v\n", out)
-	}
+	Rep("(def *host-language* \"go\")")
+	Rep("(def not (fn (a) (if a false true)))")
+	Rep("(def load-file (fn (f) (eval (read-string (str \"(do \" (slurp f) \")\")))))")
+	Rep("(defmacro cond (fn (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))")
+	Rep("(def *gensym-counter* (atom 0))")
+	Rep("(def gensym (fn [] (symbol (str \"G__\" (swap! *gensym-counter* (fn* [x] (+ 1 x)))))))")
+	Rep("(defmacro or (fn (& xs) (if (empty? xs) nil (if (= 1 (count xs)) (first xs) (let (condvar (gensym)) `(let (~condvar ~(first xs)) (if ~condvar ~condvar (or ~@(rest xs)))))))))")
+	Rep("(defmacro defn (fn [name args body] `(def ~name (fn ~args ~body))))")
 }

@@ -7,13 +7,16 @@ import (
 )
 
 type Env struct {
-	Data  map[string]types.ParrotType
-	Outer types.EnvType
+	Data      map[string]types.ParrotType
+	Outer     types.EnvType
+	curFunc   types.ParrotType // current func
+	pc        int
+	addrStack types.ParrotType // stack trace
 }
 
 func NewEnv(outer types.EnvType, binds_mt types.ParrotType,
 	exprs_mt types.ParrotType) (types.EnvType, error) {
-	env := Env{map[string]types.ParrotType{}, outer}
+	env := Env{map[string]types.ParrotType{}, outer, nil, 0, nil}
 
 	if binds_mt != nil && exprs_mt != nil {
 		binds, e := types.GetSlice(binds_mt)
@@ -66,4 +69,8 @@ func (e Env) All() (types.ParrotType, error) {
 		fmt.Print(k + " ")
 	}
 	return nil, nil
+}
+
+func (e *Env) GetStackTrace() {
+
 }

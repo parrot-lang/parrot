@@ -219,6 +219,7 @@ func readForm(rdr Reader) (types.ParrotType, error) {
 		return readVector(rdr)
 	case "}":
 		return nil, errors.New("unexpected '}'")
+	case "\n":
 	case "{":
 		return readHashMap(rdr)
 	default:

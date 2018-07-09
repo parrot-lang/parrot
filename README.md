@@ -18,7 +18,7 @@
 * [ ] json encode & decode
 * [ ] php-eval & python-eval function builtin
 * [ ] FFI suport
-* [ ] Embed Go
+* [X] Embed Go
 * [ ] Namespaces
 * [ ] Stack traces.
 * [ ] call/cc support
