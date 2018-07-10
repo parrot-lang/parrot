@@ -3,6 +3,12 @@
 
 ## Parrot - an clojure-like language for Go.
 
+## Install
+
+```
+go install github.com/sllt/parrot/cmd/parrot
+```
+
 
 ## Features
 

@@ -375,4 +375,5 @@ func init() {
 	Rep("(def gensym (fn [] (symbol (str \"G__\" (swap! *gensym-counter* (fn* [x] (+ 1 x)))))))")
 	Rep("(defmacro or (fn (& xs) (if (empty? xs) nil (if (= 1 (count xs)) (first xs) (let (condvar (gensym)) `(let (~condvar ~(first xs)) (if ~condvar ~condvar (or ~@(rest xs)))))))))")
 	Rep("(defmacro defn (fn [name args body] `(def ~name (fn ~args ~body))))")
+	Rep("(defn curry [func args] (fn [arg] (apply func (cons args (list arg)))))")
 }

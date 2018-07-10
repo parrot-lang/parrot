@@ -2,7 +2,7 @@ package reader
 
 import (
 	"errors"
-	// "fmt"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -161,7 +161,6 @@ func readForm(rdr Reader) (types.ParrotType, error) {
 	if token == nil {
 		return nil, errors.New("readForm underflow")
 	}
-
 	switch *token {
 	case `'`:
 		rdr.next()
@@ -220,6 +219,7 @@ func readForm(rdr Reader) (types.ParrotType, error) {
 	case "}":
 		return nil, errors.New("unexpected '}'")
 	case "\n":
+		fmt.Println("hello")
 	case "{":
 		return readHashMap(rdr)
 	default:
