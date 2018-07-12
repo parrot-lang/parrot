@@ -270,6 +270,18 @@ func ChanFunction(name string, args []types.ParrotType) (types.ParrotType, error
 	return <-channel, nil
 }
 
+func CloseChanFunction(args []types.ParrotType) (types.ParrotType, error) {
+	if len(args) < 1 {
+		return nil, errors.New("argment error")
+	}
+	switch t := args[0].(type) {
+	case types.Channel:
+		close(t.Val)
+		return nil, nil
+	}
+	return nil, errors.New(fmt.Sprintf("argument 0 of %s must be channel", args[0]))
+}
+
 // Exceptions
 func throw(a []types.ParrotType) (types.ParrotType, error) {
 	return nil, types.ParrotError{a[0]}
@@ -879,6 +891,9 @@ var NS = map[string]types.ParrotType{
 	},
 	"makeChan": func(a []types.ParrotType) (types.ParrotType, error) {
 		return MakeChanFunction(a)
+	},
+	"closeChan": func(a []types.ParrotType) (types.ParrotType, error) {
+		return CloseChanFunction(a)
 	},
 	"send": func(a []types.ParrotType) (types.ParrotType, error) {
 		return ChanFunction("send", a)
